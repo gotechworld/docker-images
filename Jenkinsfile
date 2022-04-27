@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="rabbitmq"
-        IMAGE_TAG="3.7-alpine"
+        IMAGE_TAG="3.8-alpine"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
