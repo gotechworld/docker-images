@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:bionic
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
@@ -61,7 +61,7 @@ RUN mkdir /docker-entrypoint-initdb.d
 
 RUN set -ex; \
 	export GNUPGHOME="$(mktemp -d)"; \
-	set -- '2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5'; \
+	set -- 'E162F504A20CDF15827F718D4B7C549A058F8B6B'; \
 	for key; do \
 		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
 	done; \
@@ -70,21 +70,26 @@ RUN set -ex; \
 	command -v gpgconf && gpgconf --kill all || :; \
 	rm -r "$GNUPGHOME"
 
+# Allow build-time overrides (eg. to build image with MongoDB Enterprise version)
+# Options for MONGO_PACKAGE: mongodb-org OR mongodb-enterprise
+# Options for MONGO_REPO: repo.mongodb.org OR repo.mongodb.com
 # Example: docker build --build-arg MONGO_PACKAGE=mongodb-enterprise --build-arg MONGO_REPO=repo.mongodb.com .
 ARG MONGO_PACKAGE=mongodb-org
 ARG MONGO_REPO=repo.mongodb.org
 ENV MONGO_PACKAGE=${MONGO_PACKAGE} MONGO_REPO=${MONGO_REPO}
 
-ENV MONGO_MAJOR 3.6
-RUN echo "deb [ signed-by=/etc/apt/keyrings/mongodb.gpg ] http://$MONGO_REPO/apt/ubuntu xenial/${MONGO_PACKAGE%-unstable}/$MONGO_MAJOR multiverse" | tee "/etc/apt/sources.list.d/${MONGO_PACKAGE%-unstable}.list"
+ENV MONGO_MAJOR 4.2
+RUN echo "deb [ signed-by=/etc/apt/keyrings/mongodb.gpg ] http://$MONGO_REPO/apt/ubuntu bionic/${MONGO_PACKAGE%-unstable}/$MONGO_MAJOR multiverse" | tee "/etc/apt/sources.list.d/${MONGO_PACKAGE%-unstable}.list"
 
-
-ENV MONGO_VERSION 3.6.23
-
+# http://docs.mongodb.org/master/release-notes/4.2/
+ENV MONGO_VERSION 4.2.19
+# 03/02/2022, https://github.com/mongodb/mongo/tree/e68a7d47305e14e090cba9ce3d92533053299996
 
 RUN set -x \
+# installing "mongodb-enterprise" pulls in "tzdata" which prompts for input
 	&& export DEBIAN_FRONTEND=noninteractive \
 	&& apt-get update \
+# starting with MongoDB 4.3 (and backported to 4.0 and 4.2 *and* 3.6??), the postinst for server includes an unconditional "systemctl daemon-reload" (and we don't have anything for "systemctl" to talk to leading to dbus errors and failed package installs)
 	&& ln -s /bin/true /usr/local/bin/systemctl \
 	&& apt-get install -y \
 		${MONGO_PACKAGE}=$MONGO_VERSION \
