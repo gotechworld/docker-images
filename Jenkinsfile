@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="elasticsearch"
-        IMAGE_TAG="7.3.2"
+        IMAGE_TAG="7.8.1"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
