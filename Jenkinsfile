@@ -3,8 +3,8 @@ pipeline {
     environment {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
-        IMAGE_REPO_NAME="golang"
-        IMAGE_TAG="latest"
+        IMAGE_REPO_NAME="golang:alpine3.15"
+        IMAGE_TAG="alpine3.15"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
@@ -40,4 +40,12 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo 'One way or another, I have finished'
+        }
+        success {
+            echo 'I succeeded!'
+        }
+    }  
 }
