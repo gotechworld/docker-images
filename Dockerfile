@@ -231,8 +231,8 @@ RUN apk add binutils \
 #####################################
 # Cleanup:
 #####################################
-RUN rm -r /var/cache/apk/* \
-    && rm -r /tmp/*
+#RUN rm -r /var/cache/apk/* \
+    #&& rm -r /tmp/*
 
 ENTRYPOINT ["docker-php-entrypoint"]
 WORKDIR /var/www/html
