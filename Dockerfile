@@ -186,14 +186,13 @@ RUN set -eux; \
 	ln -sf "$RABBITMQ_DATA_DIR/.erlang.cookie" /root/.erlang.cookie
 
 # Use the latest stable RabbitMQ release (https://www.rabbitmq.com/download.html)
-ENV RABBITMQ_VERSION 3.8.28
+ENV RABBITMQ_VERSION 3.9.14
 # https://www.rabbitmq.com/signatures.html#importing-gpg
 ENV RABBITMQ_PGP_KEY_ID="0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
 ENV RABBITMQ_HOME=/opt/rabbitmq
 
-# Add RabbitMQ to PATH, send all logs to TTY
-ENV PATH=$RABBITMQ_HOME/sbin:$PATH \
-	RABBITMQ_LOGS=-
+# Add RabbitMQ to PATH
+ENV PATH=$RABBITMQ_HOME/sbin:$PATH
 
 # Install RabbitMQ
 RUN set -eux; \
@@ -255,6 +254,7 @@ VOLUME $RABBITMQ_DATA_DIR
 # https://docs.docker.com/samples/library/ubuntu/#locales
 ENV LANG=C.UTF-8 LANGUAGE=C.UTF-8 LC_ALL=C.UTF-8
 
+COPY --chown=rabbitmq:rabbitmq docker/tags/10-defaults.conf /etc/rabbitmq/conf.d/
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
 
