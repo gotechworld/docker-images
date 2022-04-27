@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="php"
-        IMAGE_TAG="7.2-cli"
+        IMAGE_TAG="7.3-cli"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
