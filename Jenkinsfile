@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="mongo"
-        IMAGE_TAG="3.6-xenial"
+        IMAGE_TAG="4.2-bionic"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
