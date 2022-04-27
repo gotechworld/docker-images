@@ -1,5 +1,8 @@
 FROM alpine:3.15
 
+ARG BUILD_DATE
+ARG VCS_REF
+
 # dependencies required for running "phpize"
 # these get automatically installed and removed by "docker-php-ext-*" (unless they're already installed)
 ENV PHPIZE_DEPS \
@@ -49,11 +52,11 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312
+ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F
 
-ENV PHP_VERSION 7.4.28
-ENV PHP_URL="https://www.php.net/distributions/php-7.4.28.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-7.4.28.tar.xz.asc"
-ENV PHP_SHA256="9cc3b6f6217b60582f78566b3814532c4b71d517876c25013ae51811e65d8fce"
+ENV PHP_VERSION 8.0.17
+ENV PHP_URL="https://www.php.net/distributions/php-8.0.17.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.0.17.tar.xz.asc"
+ENV PHP_SHA256="4e7d94bb3d144412cb8b2adeb599fb1c6c1d7b357b0d0d0478dc5ef53532ebc5"
 
 RUN set -eux; \
 	\
@@ -81,9 +84,6 @@ RUN set -eux; \
 	\
 	apk del --no-network .fetch-deps
 
-#####################################
-# Install PHP utils
-#####################################
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
@@ -104,8 +104,6 @@ RUN set -eux; \
 	\
 # make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
 	rm -vf /usr/include/iconv.h; \
-# PHP < 8 doesn't know to look deeper for GNU libiconv: https://github.com/php/php-src/commit/b480e6841ecd5317faa136647a2b8253a4c2d0df
-	ln -sv /usr/include/gnu-libiconv/*.h /usr/include/; \
 	\
 	export \
 		CFLAGS="$PHP_CFLAGS" \
@@ -208,6 +206,28 @@ COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
 # sodium was built as a shared module (so that it can be replaced later if so desired), so let's enable it too (https://github.com/docker-library/php/issues/598)
 RUN docker-php-ext-enable sodium
+
+#####################################
+# TODO - 
+# Install PHP modules
+#####################################
+# PDO_MYSQL - sample
+#####################################
+#RUN docker-php-ext-install pdo_mysql \
+#    && docker-php-ext-enable pdo_mysql
+
+#####################################
+# Install composer:
+#####################################
+RUN curl -L -o /tmp/composer-setup.php "https://getcomposer.org/installer"
+RUN php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+#####################################
+# Add Cron && Sed:
+#####################################
+RUN apk add --no-cache \
+    dcron \
+    sed
 
 #####################################
 # Various:
