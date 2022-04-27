@@ -1,10 +1,13 @@
 pipeline {
     agent {label 'linux'}
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
     environment {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="php"
-        IMAGE_TAG="8.1-cli"
+        IMAGE_TAG="7.4-fpm"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
