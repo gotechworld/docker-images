@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCOUNT_ID="009570627831"
         AWS_DEFAULT_REGION="eu-central-1" 
         IMAGE_REPO_NAME="redis"
-        IMAGE_TAG="6.0.9-alpine3.12"
+        IMAGE_TAG="6.2.6-alpine3.15"
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
    
